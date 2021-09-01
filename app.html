@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  var resp = await fetch("./apps.json")
+  var apps = await resp.json()
+  var keys = Object.keys(apps)
+  keys.sort()
+  var strList = []
+  for(let key of keys) {
+    if(key.length == 0) {
+      continue
+    }
+    var value = apps[key]
+    var addr = value[0]
+    var url = value[1]
+    strList.push('<tr><td><a href="'+url+'" target="_blank">'+key+'</a></td>')
+    strList.push('<td><code>'+addr+'</code>')
+    strList.push('<button title="Copy this address to the clipboard" onclick="navigator.clipboard.writeText(\''+addr+'\')">copy</button></td></tr>')
+  }
+  document.getElementById('appTbl').innerHTML=strList.join("")
+});
+    
+</script>
+<style>
+table { border-spacing: 15px; }
+.normal {
+   width: 1000px;
+   margin: auto;
+   text-align: left;
+   font-size: 24px;
+}
+</style>
+</head>
+<body>
+<div class="normal">
+<h1 style="text-align: center;">DApp Addresses</h1>
+<p>Here are some known DApp's addresses on smartBCH.</p>
+<table style="margin: auto" id="appTbl">
+</table>
+</div>
+</body>
+</html>

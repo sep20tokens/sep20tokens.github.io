@@ -1,7 +1,78 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script>
+async function add(tokenAddress, symbol, decimals) {
+  if (typeof window.ethereum === 'undefined') {
+    alert("Your browser does not have a wallet plugin")
+    return
+  } else {
+    window.ethereum.enable()
+  }
+  try {
+    // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+    const wasAdded = await ethereum.request({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+	  address: tokenAddress,
+	  symbol: symbol,
+	  decimals: decimals
+	},
+      },
+    });
+  
+    if (wasAdded) {
+      alert('Succeed to add the token at '+tokenAddress);
+    } else {
+      alert('Fail to add the token at '+tokenAddress);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async function(){
+  var resp = await fetch("./tokens.json")
+  var tokens = await resp.json()
+  var keys = Object.keys(tokens)
+  keys.sort()
+  var strList = []
+  for(let key of keys) {
+    if(key.length == 0) {
+      continue
+    }
+    var value = tokens[key]
+    var addr = value[0]
+    var decimals = value[1]
+    var url = value[2]
+    strList.push('<tr><td><a href="'+url+'" target="_blank">'+key+'</a></td>')
+    strList.push('<td><code>'+addr+'</code>')
+    strList.push('<button title="Copy this address to the clipboard" onclick="navigator.clipboard.writeText(\''+addr+'\')">copy</button></td>')
+    strList.push('<td><a title="View this address in the browser" href="https://www.smartscan.cash/address/'+addr+'"  target="_blank">View</a></td>')
+    strList.push('<td><a title="Add this asset to your wallet" href="javascript:add(\''+addr+'\',\''+key+'\','+decimals+')">Add</a></td></tr>')
+  }
+  document.getElementById('tokenTbl').innerHTML=strList.join("")
+});
+    
+</script>
+<style>
+table { border-spacing: 15px; }
+.normal {
+   width: 1000px;
+   margin: auto;
+   text-align: left;
+   font-size: 24px;
+}
+</style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+<div class="normal">
+<h1 style="text-align: center;">SEP20 Tokens</h1>
+<p>Here are some known SEP20 tokens on smartBCH. You can view these tokens in the <a href="https://www.smartscan.cash">browser</a>, or add them to your wallet plugin as an asset to watch.</p>
+<table style="margin: auto" id="tokenTbl">
+</table>
+</div>
 </body>
 </html>
