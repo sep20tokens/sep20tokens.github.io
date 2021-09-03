@@ -4,7 +4,7 @@
 <title>SEP20 Tokens</title>
 <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
 <script>
-async function add(tokenAddress, symbol, decimals) {
+async function add(tokenAddress, symbol, decimals, image = undefined) {
   if (typeof window.ethereum === 'undefined') {
     alert("Your browser does not have a wallet plugin")
     return
@@ -20,7 +20,8 @@ async function add(tokenAddress, symbol, decimals) {
         options: {
 	  address: tokenAddress,
 	  symbol: symbol,
-	  decimals: decimals
+	  decimals: decimals,
+    image
 	},
       },
     });
@@ -49,11 +50,12 @@ document.addEventListener("DOMContentLoaded", async function(){
     var addr = value[0]
     var decimals = value[1]
     var url = value[2]
+    var image = value.length>3?value[3]:"";
     strList.push('<tr><td><a href="'+url+'" target="_blank">'+key+'</a></td>')
     strList.push('<td><code>'+addr+'</code>')
     strList.push('<button title="Copy this address to the clipboard" onclick="navigator.clipboard.writeText(\''+addr+'\')">copy</button></td>')
     strList.push('<td><a title="View this address in the browser" href="https://www.smartscan.cash/address/'+addr+'"  target="_blank">View</a></td>')
-    strList.push('<td><a title="Add this asset to your wallet" href="javascript:add(\''+addr+'\',\''+key+'\','+decimals+')">Add</a></td></tr>')
+    strList.push('<td><a title="Add this asset to your wallet" href="javascript:add(\''+addr+'\',\''+key+'\','+decimals+',\''+image+'\')">Add</a></td></tr>')
   }
   document.getElementById('tokenTbl').innerHTML=strList.join("")
 });
